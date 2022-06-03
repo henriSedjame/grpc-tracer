@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package io.github.hsedjame.grpc.tracing.dtos;
+option java_multiple_files = true;
+
+import "models.proto";
+
+// Dashboard
+message Empty {}
+
+message TraceRequestEvent {
+  string correlationId = 1;
+}
+
+message TraceDto {
+  string correlationId = 1;
+  string label = 2;
+  int32 duration = 3;
+  bool closed = 4;
+
+  message SpanDto {
+    string label = 1;
+    int32 start = 2;
+    int32 duration = 3;
+    repeated models.Log logs = 4;
+  }
+
+  repeated SpanDto spans = 5;
+}
+
+message TraceResponseEvent {
+  TraceDto content = 1;
+}
+
+
+message TraceInfo {
+  string correlationId = 1;
+  string label = 2;
+}
