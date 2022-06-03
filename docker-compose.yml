@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  tracer-server:
+    build: tracer
+    ports:
+      - "7777:7777"
+    networks:
+      - envoy-mesh
+
+  proxy:
+    image: envoyproxy/envoy-alpine:v1.14.1
+    environment:
+      NODE_ENV: development
+    networks:
+      - envoy-mesh
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+
+  #tracer-ui:
+  #  build: tracer-ui
+  #  command: npm start
+  #  depends_on:
+  #    - tracer-server
+  #    - proxy
+  #  ports:
+  #    - "4200:4200"
+  #  networks:
+  #    - envoy-mesh
+  #  volumes:
+  #    - ./tracer-ui:/usr/src/app:rw
+  #    - /usr/src/app/node_modules
+
+networks:
+  envoy-mesh: {}

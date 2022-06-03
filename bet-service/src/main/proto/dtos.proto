@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package io.github.hsedjame.grpc.tracing.dtos;
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+import "models.proto";
+
+// Message utils
+message Empty {}
+
+// Initialise a tracing
+message InitTraceRequest {string name = 1;}
+message InitTraceResponse {
+  string correlationId = 1;
+}
+
+// Span
+message AddSpanRequest {
+  string correlationId = 1;
+  string name = 2;
+}
+
+message AddSpanResponse {
+  bool added = 1;
+}
+
+message CloseSpanRequest {
+  string correlationId = 1;
+  string spanName = 2;
+}
+
+message CloseSpanResponse {
+  bool closed = 1;
+}
+
+// Logging
+message LogEvent {
+  string correlationId = 1;
+  string spanName = 2;
+  models.Log log = 3;
+  google.protobuf.Timestamp createdAt = 4;
+}
+
+// Close a tracing
+message CloseTraceRequest {
+  string correlationId = 1;
+}
+
+message CloseTraceResponse {
+  bool closed = 1;
+}
+
+
+// Dashboard
+

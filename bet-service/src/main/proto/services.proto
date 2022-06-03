@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package io.github.hsedjame.grpc.tracing.services;
+option java_multiple_files = true;
+
+import "dtos.proto";
+
+service TracingServices {
+  rpc init(dtos.InitTraceRequest) returns (dtos.InitTraceResponse);
+
+  rpc addSpan(dtos.AddSpanRequest) returns (dtos.AddSpanResponse);
+
+  rpc closeSpan(dtos.CloseSpanRequest) returns (dtos.CloseSpanResponse);
+
+  rpc logEvents(stream dtos.LogEvent) returns (dtos.Empty);
+
+  rpc close(dtos.CloseTraceRequest) returns (dtos.CloseTraceResponse);
+}
