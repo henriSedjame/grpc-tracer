@@ -14,6 +14,7 @@ static_resources:
               config:
                 codec_type: auto
                 stat_prefix: ingress_http
+                stream_idle_timeout: 0s
                 route_config:
                   name: local_route
                   virtual_hosts:
@@ -23,7 +24,7 @@ static_resources:
                         - match: { prefix: "/" }
                           route:
                             cluster: tracer_server
-                            max_grpc_timeout: 2s
+                            max_grpc_timeout: 0s
                       cors:
                         allow_origin_string_match:
                           - prefix: "*"
@@ -41,4 +42,12 @@ static_resources:
       type: logical_dns
       http2_protocol_options: {}
       lb_policy: round_robin
-      hosts: [{ socket_address: { address: tracer-server, port_value: 7777 }}]
+      hosts:
+        - socket_address:
+            address: tracer-server
+            port_value: 7777
+      upstream_connection_options:
+        tcp_keepalive:
+          keepalive_probes: 1
+          keepalive_time: 10
+          keepalive_interval: 10

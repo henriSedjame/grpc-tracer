@@ -5,12 +5,7 @@ option java_multiple_files = true;
 
 import "models.proto";
 
-// Dashboard
 message Empty {}
-
-message TraceRequestEvent {
-  string correlationId = 1;
-}
 
 message TraceDto {
   string correlationId = 1;
@@ -28,12 +23,3 @@ message TraceDto {
   repeated SpanDto spans = 5;
 }
 
-message TraceResponseEvent {
-  TraceDto content = 1;
-}
-
-
-message TraceInfo {
-  string correlationId = 1;
-  string label = 2;
-}

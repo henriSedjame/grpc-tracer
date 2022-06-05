@@ -18,7 +18,5 @@ service TracingServices {
 }
 
 service DashboardService {
-  rpc getTraces(dtos.Empty) returns (stream dtos.TraceInfo);
-
-  rpc listen(stream dtos.TraceRequestEvent) returns (stream dtos.TraceResponseEvent);
+  rpc getTraces(dtos.Empty) returns (stream dtos.TraceDto);
 }

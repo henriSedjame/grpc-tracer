@@ -3,3 +3,4 @@
 **/build
 
 /tracer-ui/.vscode/
+/tracer-ui/.angular/

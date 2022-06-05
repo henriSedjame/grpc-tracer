@@ -45,6 +45,8 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java-util:3.20.1")
     implementation("com.google.protobuf:protobuf-kotlin:3.20.1")
 
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.1.6")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.6.1-native-mt")
 
     testImplementation(kotlin("test"))
 
@@ -58,8 +60,8 @@ tasks.test {
 
 tasks.withType<KotlinCompile>().all {
     kotlinOptions{
-        jvmTarget = "1.8"
-        freeCompilerArgs = listOf("-Xopt-in=kotlin.RequiresOptIn")
+        jvmTarget = "17"
+        freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn")
     }
 
 

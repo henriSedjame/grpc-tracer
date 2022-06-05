@@ -1,0 +1,38 @@
+<mat-expansion-panel style="margin-bottom: 5px">
+  <mat-expansion-panel-header>
+    <mat-panel-title style="height: 50px" >
+      <div style="width: 20%" [ngStyle]="{'color': hasError() ? 'red' : (hasWarning() ? 'darkorange' : 'black') }">{{span.getLabel()}}</div>
+
+      <div  [ngStyle]="{'margin-left': marginLeft.toString().concat('%'), 'width': width.toString().concat('%')}">
+        <div>{{span.getDuration()}} ms</div>
+        <div style="height: 5px; background-color: darkcyan;"></div>
+      </div>
+
+    </mat-panel-title>
+
+  </mat-expansion-panel-header>
+
+  <div style="margin-left: 20%">
+    <p style="font-size: 15px; font-weight: bold; margin-bottom: 15px">LOGS</p>
+
+    <div *ngFor="let log of span.getLogsList()">
+      <mat-card style="margin-bottom: 4px;">
+        <div [ngSwitch]="log.getLevel()">
+          <p *ngSwitchCase="0" style="font-size: 12px; font-weight: bold; color: green" >INFO</p>
+          <p *ngSwitchCase="1" style="font-size: 12px; font-weight: bold; color: darkorange">WARNING</p>
+          <p *ngSwitchCase="3" style="font-size: 12px; font-weight: bold; color: red">ERROR</p>
+        </div>
+
+        <div>
+          {{log.getMessage()}}
+        </div>
+      </mat-card>
+
+    </div>
+  </div>
+
+
+
+
+</mat-expansion-panel>
+

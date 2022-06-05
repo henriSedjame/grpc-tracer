@@ -1,4 +1,4 @@
-package io.github.hsedjame.tracing
+package io.github.hsedjame.tracing.client
 
 import io.github.hsedjame.grpc.tracing.dtos.*
 import io.github.hsedjame.grpc.tracing.models.Log
@@ -68,6 +68,12 @@ class TracingClient(
 
         return id
     }
+
+    fun registerTrace(id: UUID): Unit {
+        currentTraces[Thread.currentThread().name] = id
+    }
+
+    fun currentTrace() = currentTraces[Thread.currentThread().name]
 
     suspend fun closeTrace(id: UUID): Unit {
         val response = stub.close(

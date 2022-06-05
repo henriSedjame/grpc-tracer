@@ -1,0 +1,17 @@
+
+POST http://localhost:9001/users/check
+Content-Type: application/json
+
+< requests/user.json
+
+###
+
+POST http://localhost:9002/bets
+Content-Type: application/json
+Authorization: jo:joe1234
+
+< requests/bet.json
+
+###
+GET http://localhost:9002/bets/joe
+Content-Type: application/json

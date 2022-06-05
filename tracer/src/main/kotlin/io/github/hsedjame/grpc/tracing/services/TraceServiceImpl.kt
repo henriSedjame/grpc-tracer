@@ -7,10 +7,11 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import reactor.core.publisher.Sinks
 import java.time.Duration
 import java.util.*
 
-class TraceServiceImpl(private val storage: Storage) : TracingServicesGrpcKt.TracingServicesCoroutineImplBase() {
+class TraceServiceImpl(private val storage: Storage, private val sinks: Sinks.Many<Trace>) : TracingServicesGrpcKt.TracingServicesCoroutineImplBase() {
 
     override suspend fun init(request: InitTraceRequest): InitTraceResponse {
         // Create new trace
@@ -29,7 +30,6 @@ class TraceServiceImpl(private val storage: Storage) : TracingServicesGrpcKt.Tra
     }
 
     override suspend fun addSpan(request: AddSpanRequest): AddSpanResponse {
-
 
         // get trace
         return handleResult(
@@ -86,8 +86,12 @@ class TraceServiceImpl(private val storage: Storage) : TracingServicesGrpcKt.Tra
                 }.let {
 
                     handleResult(
-                        { storage.update(it) },
-                        { CloseSpanResponse.newBuilder().setClosed(true).build() }
+                        {
+                            storage.update(it)
+                        },
+                        {
+                            CloseSpanResponse.newBuilder().setClosed(true).build()
+                        }
                     )
 
                 }
@@ -143,6 +147,7 @@ class TraceServiceImpl(private val storage: Storage) : TracingServicesGrpcKt.Tra
                         storage.update(it.copy(closed = true, lifetime = Lifetime.end(it.lifetime)))
                     },
                     {
+                        sinks.tryEmitNext(it)
                         lookup(it)
                         CloseTraceResponse.newBuilder().setClosed(true).build()
                     }
