@@ -20,19 +20,19 @@ services:
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
 
-  #tracer-ui:
-  #  build: tracer-ui
-  #  command: npm start
-  #  depends_on:
-  #    - tracer-server
-  #    - proxy
-  #  ports:
-  #    - "4200:4200"
-  #  networks:
-  #    - envoy-mesh
-  #  volumes:
-  #    - ./tracer-ui:/usr/src/app:rw
-  #    - /usr/src/app/node_modules
+  tracer-ui:
+    build: tracer-ui
+    #command: npm start
+    depends_on:
+      - tracer-server
+      - proxy
+    ports:
+      - "4200:80"
+    networks:
+      - envoy-mesh
+    #volumes:
+    #  - ./tracer-ui:/usr/src/app:rw
+    #  - /usr/src/app/node_modules
 
 networks:
   envoy-mesh: {}

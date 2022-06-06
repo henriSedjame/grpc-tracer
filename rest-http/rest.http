@@ -2,13 +2,16 @@
 POST http://localhost:9001/users/check
 Content-Type: application/json
 
-< requests/user.json
+{
+"login" : "joe",
+"password": "joe1234"
+}
 
 ###
 
 POST http://localhost:9002/bets
 Content-Type: application/json
-Authorization: jo:joe1234
+Authorization: joe:joe1234
 
 < requests/bet.json
 
