@@ -1,20 +1,25 @@
 
+### Call User-Service to Check a User
 POST http://localhost:9001/users/check
 Content-Type: application/json
 
-{
-"login" : "joe",
-"password": "joe1234"
-}
+< requests/user-major.json
 
-###
-
+### Call Bet-Service to bet with a major user
 POST http://localhost:9002/bets
 Content-Type: application/json
-Authorization: joe:joe1234
+Authorization: {{username-major}}:{{password-major}}
 
-< requests/bet.json
+< requests/bet-major.json
 
-###
-GET http://localhost:9002/bets/joe
+### Call Bet-Service to bet with a minor user
+POST http://localhost:9002/bets
+Content-Type: application/json
+Authorization: {{username-minor}}:{{password-minor}}
+
+< requests/bet-minor.json
+
+
+### Call Bet-Service to get user's bet
+GET http://localhost:9002/bets/{{username-major}}
 Content-Type: application/json
