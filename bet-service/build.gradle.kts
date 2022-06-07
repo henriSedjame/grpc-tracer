@@ -45,3 +45,9 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+    kotlinOptions{
+        jvmTarget = "17"
+    }
+}

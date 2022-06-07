@@ -9,7 +9,6 @@ import io.ktor.serialization.gson.*
 import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 
 
@@ -26,9 +25,7 @@ fun Application.configureRouting(context: TracingContext, service: UserService) 
             post("/check") {
                 context.span("POST ::: /users/check"){ span ->
 
-                    span.info("Receive check request")
-
-                    val request = call.receive<UserRequest>()
+                    val request =  span.logBody<UserRequest>(call)
 
                     val result = service.isPermit(request)
 

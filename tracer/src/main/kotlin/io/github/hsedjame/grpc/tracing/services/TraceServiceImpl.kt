@@ -104,8 +104,6 @@ class TraceServiceImpl(private val storage: Storage, private val sinks: Sinks.Ma
 
         requests.collect { logEvent ->
             GlobalScope.launch {
-                println("Receive log ${logEvent.spanName} ::: ${logEvent.log.message}")
-
                 handleResult(
                     {
                         storage.findById(UUID.fromString(logEvent.correlationId))
@@ -130,9 +128,7 @@ class TraceServiceImpl(private val storage: Storage, private val sinks: Sinks.Ma
                     }
                 )
             }
-
         }
-
         return Empty.newBuilder().build()
     }
 

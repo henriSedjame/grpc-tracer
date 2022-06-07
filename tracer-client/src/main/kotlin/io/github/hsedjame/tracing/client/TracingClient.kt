@@ -5,6 +5,8 @@ import io.github.hsedjame.grpc.tracing.models.Log
 import io.github.hsedjame.grpc.tracing.models.Log.LogLevel
 import io.github.hsedjame.grpc.tracing.services.TracingServicesGrpcKt
 import io.grpc.ManagedChannel
+import io.ktor.server.application.*
+import io.ktor.server.request.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -52,6 +54,12 @@ class TracingClient(
                     .build()
             )
         }
+
+        suspend inline fun <reified T : Any> logBody(call: ApplicationCall) :T {
+            val body: T = call.receive()
+            this.info("Request body : $body")
+            return body
+        }
     }
 
     private val stub: TracingServicesGrpcKt.TracingServicesCoroutineStub =
@@ -69,13 +77,13 @@ class TracingClient(
         return id
     }
 
-    fun registerTrace(id: UUID): Unit {
+    fun registerTrace(id: UUID) {
         currentTraces[Thread.currentThread().name] = id
     }
 
     fun currentTrace() = currentTraces[Thread.currentThread().name]
 
-    suspend fun closeTrace(id: UUID): Unit {
+    suspend fun closeTrace(id: UUID) {
         val response = stub.close(
             CloseTraceRequest.newBuilder()
                 .setCorrelationId(id.toString())
@@ -95,7 +103,7 @@ class TracingClient(
 
         var sink: Sinks.Many<LogEvent>? = null
 
-        var logsJob: Job? = null;
+        var logsJob: Job? = null
 
         val response = stub.addSpan(
             AddSpanRequest.newBuilder()

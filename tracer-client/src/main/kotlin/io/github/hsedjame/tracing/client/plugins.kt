@@ -22,7 +22,6 @@ fun createTracingPlugin(context: TracingContext) : ApplicationPlugin<TracingClie
 
         onCall {
             val headers = it.request.headers
-            println(" ######################## Intercept call ${headers[TRACE_CHILD]}")
             if (headers.contains(TRACE_CHILD)) headers[CORRELATION_ID].also { id ->
                 run {
                     val traceId = UUID.fromString(id)
@@ -30,7 +29,8 @@ fun createTracingPlugin(context: TracingContext) : ApplicationPlugin<TracingClie
                     it.attributes.put(key, traceId)
                 }
             }
-            else pluginConfig.createTrace("${context.app} ::: ${it.request.httpMethod.value} ${it.request.uri}").also { id ->  it.attributes.put(key, id)}
+            else pluginConfig.createTrace("${context.app} ::: ${it.request.httpMethod.value} ${it.request.uri}")
+                .also { id ->  it.attributes.put(key, id)}
 
         }
 
@@ -60,9 +60,7 @@ fun httpClient(context: TracingContext): HttpClient {
         }
     }
     client.plugin(HttpSend).intercept { request  ->
-        println(" ######################## Intercept call ${request.url}")
         context.traceId()?.let {
-            println(" ######################## Found current trace $it")
             request.headers.append(CORRELATION_ID, it.toString())
             request.headers.append(TRACE_CHILD, "true")
         }

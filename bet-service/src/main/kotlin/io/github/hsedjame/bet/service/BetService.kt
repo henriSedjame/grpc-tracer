@@ -28,7 +28,7 @@ class BetService(private val context: TracingContext, private val httpClient: Ht
                 setBody(CheckRequest(name, password))
             }.body<Boolean>()
 
-            span.info("Response received from UserService : $checkResult")
+            span.info("Response received from UserService : user-authorized=$checkResult")
 
             if (!checkResult) {
                 return@span Result.failure(BetForbidden(name))

@@ -9,6 +9,7 @@ plugins {
 
 group = "io.github.hsedjame"
 version = "0.0.1"
+
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 
@@ -33,4 +34,11 @@ dependencies {
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+}
+
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+    kotlinOptions{
+        jvmTarget = "17"
+    }
 }

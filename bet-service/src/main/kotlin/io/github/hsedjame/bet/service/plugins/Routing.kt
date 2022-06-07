@@ -10,7 +10,6 @@ import io.ktor.http.*
 import io.ktor.serialization.gson.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -31,13 +30,12 @@ fun Application.configureRouting(context: TracingContext, service: BetService) {
             post("") {
 
                 context.span("POST ::: /bets") { span ->
-                    span.info("Receive add bet request")
 
-                    val request = call.receive<AddBetRequest>()
+                    val request = span.logBody<AddBetRequest>(call)
 
                     val auth = call.request.headers[AUTHORIZATION] ?: run {
                         val message = "Authorization header missing"
-                        span.error(message)
+                        span.error("Error: $message")
                         call.respond(HttpStatusCode.Unauthorized, message)
                         return@span
                     }
@@ -46,7 +44,7 @@ fun Application.configureRouting(context: TracingContext, service: BetService) {
 
                     if (parts.size != 2) {
                         val message = "Malformed Authorization header"
-                        span.error(message)
+                        span.error("Error: $message")
                         call.respond(HttpStatusCode.BadRequest, message)
                         return@span
                     }
@@ -55,7 +53,7 @@ fun Application.configureRouting(context: TracingContext, service: BetService) {
 
                     if (name != request.name) {
                         val message = "The Bet author must be the requester."
-                        span.error(message)
+                        span.error("Error: $message")
                         call.respond(HttpStatusCode.Unauthorized, message)
                         return@span
                     }
@@ -64,10 +62,11 @@ fun Application.configureRouting(context: TracingContext, service: BetService) {
 
                     service.addBet(request, password).fold(
                         {
+                            span.info("Bet registered : $it")
                             call.respond(it)
                         },
                         {
-                            span.error("Failed to add new bet")
+                            span.error("Error: ${it.message}")
                             call.respond(fromError(it), it.message ?: "Unexpected error occurred")
                         }
                     )
@@ -77,21 +76,21 @@ fun Application.configureRouting(context: TracingContext, service: BetService) {
             get("/{name}") {
                 context.span("GET ::: /get/{name}") { span ->
 
-                    span.info("Receive request getBets")
-
                     val name = call.parameters["name"] ?: run {
-                        span.error("Path variable 'name' is missing")
+                        span.error("Error: Path variable 'name' is missing")
                         call.respond(HttpStatusCode.BadRequest, "The path variable 'name' is required")
                         return@span
                     }
 
-                    span.info("... for user $name")
+                    span.info("Request with path variable name=$name")
 
                     service.getBets(name).fold(
                         {
+                            span.info("$name's lits of bets found: $it")
                             call.respond(it)
                         },
                         {
+                            span.error("Error: ${it.message}")
                             call.respond(fromError(it), it.message ?: "Unexpected error occurred")
                         }
                     )
